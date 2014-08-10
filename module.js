@@ -1,19 +1,15 @@
-var fileList = require('./fileList.js');
 var fs = require('fs');
 var path = require('path');
 
-var dir = process.argv[2];
-var extension = process.argv[3];
-
-fileList(dir, extension, function() {
+module.exports = function(dir, extension, callback) {
 	fs.readdir(dir, function(err, list) {
-		if (!err) {
-			list.forEach(function(file) {
-				if (path.extname(file) === '.' + extension) {
-					console.log(file);
-				}
-			});
+		if (err) {
+			return callback(err);
 		}
-	});	
-});
 
+		var data = list.filter(function(el) {
+			return path.extname(el).slice(1) === extension;
+		});
+		callback(null, data);
+	})
+};
